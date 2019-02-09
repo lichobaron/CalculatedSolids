@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from itertools import product, combinations, combinations_with_replacement
 import math
 import re
+import vtkplotter
 
 ##http://mathworld.wolfram.com/topics/Surfaces.html
 
@@ -17,12 +18,19 @@ def showFigure(filename):
     except IOError:
         print("     ... file " + filename+" not exits!\n")
         return False
+    X, Y ,Z = [], [], []
     for line in file_object:
         numbers = (re.findall(r"[-+]?\d*\.\d+|\d+", line))
+        X.append(float(numbers[0]))
+        Y.append(float(numbers[1]))
+        X.append(float(numbers[2]))
+        '''
         ax.scatter( float(numbers[0]),
             float(numbers[1]),
             float(numbers[2]),
-            color="r", marker='o')
+            color="r", marker='.')
+        '''
+    ax.scatter( X, Y, Z, color="r", marker='.')
     file_object.close()
     plt.show()
 #end def
