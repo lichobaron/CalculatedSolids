@@ -112,7 +112,7 @@ def calculateDrawTriangle():
 def calculateCube():
     file_object  = open("cube.txt", "w") 
     numbers = []
-    for i in np.arange(0,1.1,0.05):
+    for i in np.arange(0,1.05,0.05):
         numbers.append(i)
     for x,y,z in product(numbers, repeat=3):
         if x == 0 or x == 1 or y == 0 or y == 1 or z == 0 or z == 1:
