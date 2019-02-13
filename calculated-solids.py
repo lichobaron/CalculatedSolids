@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 from itertools import product, combinations, combinations_with_replacement
 import math
 import re
+import vtk_visualizer as vv
+import numpy as np
+import sys
+from PyQt5.QtWidgets import *
 
 ##http://mathworld.wolfram.com/topics/Surfaces.html
 
@@ -17,20 +21,29 @@ def showFigure(filename):
     except IOError:
         print("     ... file " + filename+" not exits!\n")
         return False
+    vtkControl = vv.VTKVisualizerControl()
+    a = []
+
     for line in file_object:
         numbers = (re.findall(r"[-+]?\d*\.\d+|\d+", line))
-        ax.scatter( float(numbers[0]),
-            float(numbers[1]),
-            float(numbers[2]),
-            color="r", marker='o')
+        x = float(numbers[0])
+        y = float(numbers[1])
+        z = float(numbers[2])
+        a.append([x,y,z])
+    
+    b = np.array(a)
+    vtkControl.AddPointCloudActor(b)
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+    app.exec_()
     file_object.close()
-    plt.show()
 #end def
 
 def calculateTorus(R,r):
     file_object  = open("torus.txt", "w") 
-    for theta in np.arange(0,2*np.pi,0.4):
-        for phi in np.arange(0,2*np.pi,0.4):
+    for theta in np.arange(0,2*np.pi,0.05):
+        for phi in np.arange(0,2*np.pi,0.05):
                 x = (R + r * np.cos(phi)) * np.cos(theta)
                 y = (R + r * np.cos(phi)) * np.sin(theta)
                 z = r * np.sin(phi)
@@ -54,7 +67,7 @@ def calculateDrawTorus(R,r):
 def calculateTetrahedron():
     file_object  = open("tetrahedron.txt", "w") 
     numbers = []
-    for i in np.arange(0,1.1,0.1):
+    for i in np.arange(0,1.1,0.05):
         numbers.append(i)
     for x,y,z in combinations(numbers, 3):
     	file_object.write(str(x)+" "+str(y)+" "+str(z)+"\n")
@@ -76,8 +89,8 @@ def calculateDrawTetrahedron():
 def calculateTriangle():
     file_object  = open("triangle.txt", "w") 
     numbers = []
-    for u in np.arange(0,4,0.2):
-        for v in np.arange(0,((4-u)/2),0.2):
+    for u in np.arange(0,4,0.05):
+        for v in np.arange(0,((4-u)/2),0.05):
             x = u
             y = v
             z = 4-u-2*v
@@ -99,7 +112,7 @@ def calculateDrawTriangle():
 def calculateCube():
     file_object  = open("cube.txt", "w") 
     numbers = []
-    for i in np.arange(0,1.1,0.2):
+    for i in np.arange(0,1.05,0.05):
         numbers.append(i)
     for x,y,z in product(numbers, repeat=3):
         if x == 0 or x == 1 or y == 0 or y == 1 or z == 0 or z == 1:
@@ -122,8 +135,8 @@ def calculateDrawCube():
 
 def calculateSphere():
     file_object  = open("sphere.txt", "w")
-    for u in np.arange(0, 2*np.pi, 0.3):
-        for v in np.arange(0, 2*np.pi, 0.3):
+    for u in np.arange(0, 2*np.pi, 0.1):
+        for v in np.arange(0, 2*np.pi, 0.1):
             x = np.cos(u)*np.sin(v)
             y = np.sin(u)*np.sin(v)
             z = np.cos(v)
@@ -147,14 +160,14 @@ def calculateCylinder():
     file_object  = open("cylinder.txt", "w")
 
     for u in np.arange(0, 2*np.pi, 0.1):
-        for z in range (0,10):
+        for z in np.arange (0,10,0.1):##danger
             x = np.cos(u)
             y = np.sin(u)
             file_object.write(str(x)+" "+str(y)+" "+str(z)+"\n")
 
         
     for i in np.arange(1,0,-0.1):
-        for u in np.arange(0, 2*np.pi, 0.6):
+        for u in np.arange(0, 2*np.pi, 0.1):
             x = i*np.cos(u)
             y = i*np.sin(u)
             file_object.write(str(x)+" "+str(y)+" "+str(0)+"\n")
@@ -182,8 +195,8 @@ def calculateDrawCylinder():
 
 def calculateParaboloid():
     file_object  = open("paraboloid.txt", "w")
-    for u in np.arange(0, 2*np.pi, 0.4):
-        for v in np.arange(0, np.pi, 0.2):
+    for u in np.arange(0, 2*np.pi, 0.05):
+        for v in np.arange(0, np.pi, 0.05):
             x = 1*np.cos(v)*np.cos(u)
             y = 1*np.cos(v)*np.sin(u)
             z = np.cos(v)*np.cos(v)
@@ -213,14 +226,8 @@ while opc != 0:
         + "\n   5. Draw cube."
         + "\n   6. Draw sphere."
         + "\n   7. Draw cylinder."
-        + "\n   8. Draw paraboloid."
-        + "\n   9. Calculate and draw torus."
-        + "\n   10. Calculate and draw tetrahedron."
-        + "\n   11. Calculate and draw triangle."
-        + "\n   12. Calculate and draw cube."
-        + "\n   13. Calculate and draw sphere."
-        + "\n   14. Calculate and draw cylinder."
-        + "\n   15. Calculate and draw paraboloid.")
+        + "\n   8. Draw paraboloid.")
+
     opc = int(input("Enter option: "))
     if opc == 0:
         print("     ... Bye!\n")
